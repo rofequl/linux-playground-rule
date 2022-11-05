@@ -26,11 +26,12 @@ default in all Ubuntu installations since 8.04 LTS.
 - Install apache2
     ```bash
     $ sudo apt install apache2
-    $ apache2 -v    [Check Apache version]
+    $ apache2 -v    [Check Apache version] 
     ```
 - To only allow traffic on port 80, use the Apache profile:
     ```bash
     $ sudo ufw allow in "Apache"
+    $ sudo ufw app info "Apache Full"
     ```
 - Confirm that Apache is now running with the following command:
     ```bash
@@ -46,16 +47,34 @@ default in all Ubuntu installations since 8.04 LTS.
 ### Step 2 - Installing MySQL
 
 - install this software:
-  ```bash
+    ```bash
     $ sudo apt install mysql-server
     $ sudo service mysql status
+    ```
+  - check which authentication method each of your MySQL user accounts use with the following command:
+    ```bash
+    mysql> SELECT user,authentication_string,plugin,host FROM mysql.user;
+    ```
+  - Configuring Password Access for a Dedicated MySQL User:
+    ```bash
+    $ sudo mysql
+    $ mysql -u <user> -p
+    mysql> CREATE USER 'sammy'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'password';
+    mysql> ALTER USER 'sammy'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+    mysql> GRANT ALL PRIVILEGES ON *.* TO 'sammy'@'localhost' WITH GRANT OPTION;
+    mysql> exit
     ```
 
 ### Step 3 - Installing PHP
 
 - Installing and testing PHP 7.3<br>
+  ```bash
+  $ sudo apt install php libapache2-mod-php php-mysql
+  $ php -v
+  ```
   `software-properties-common` it provides some useful scripts for adding and removing PPA. Using a `Personal Package
-  Archive (PPA)`, you can distribute software and updates directly to Ubuntu users. Create your source package, upload it
+  Archive (PPA)`, you can distribute software and updates directly to Ubuntu users. Create your source package, upload
+  it
   and Launchpad will build binaries and then host them in your own apt repository.
     ```bash
     $ sudo apt install software-properties-common
@@ -73,17 +92,31 @@ default in all Ubuntu installations since 8.04 LTS.
   ```bash
   $ sudo apt-get purge 'php*'
   ```
-### Step 3 - Install phpMyAdmin
+
+### Step 4 - Install phpMyAdmin
+
 - Once you have your LAMP setup you can start by installing phpMyAdmin.
-- below command to install phpMyAdmin:
+- below command to install phpMyAdmin:<br>
+  Warning: When the prompt appears, “apache2” is highlighted, but not selected. If you do not hit SPACE to select
+  Apache, the installer will not move the necessary files during installation. Hit SPACE, TAB, and then ENTER to select
+  Apache.
     ```bash
-    $ sudo apt install phpmyadmin
+    $ sudo apt install phpmyadmin php-mbstring php-zip php-gd php-json php-curl
+    $ sudo phpenmod mbstring
+    $ sudo systemctl restart apache2
     ```
-- Completely removing phpMyAdmin:
+  - To resolve this, select the abort option to stop the installation process.
     ```bash
-    $ sudo apt-get -f install
-    $ sudo dpkg -P phpmyadmin  
-    $ sudo rm -vf /etc/apache2/conf.d/phpmyadmin.conf
-    $ sudo rm -vfR /usr/share/phpmyadmin
-    $ sudo service apache2 restart
+    $ sudo mysql
+    $ UNINSTALL COMPONENT "file://component_validate_password";
+    $ INSTALL COMPONENT "file://component_validate_password";
+    $ exit
     ```
+  - Completely removing phpMyAdmin:
+      ```bash
+      $ sudo apt-get -f install
+      $ sudo dpkg -P phpmyadmin  
+      $ sudo rm -vf /etc/apache2/conf.d/phpmyadmin.conf
+      $ sudo rm -vfR /usr/share/phpmyadmin
+      $ sudo service apache2 restart
+      ```
