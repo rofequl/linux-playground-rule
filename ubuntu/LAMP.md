@@ -51,19 +51,19 @@ default in all Ubuntu installations since 8.04 LTS.
     $ sudo apt install mysql-server
     $ sudo service mysql status
     ```
-  - check which authentication method each of your MySQL user accounts use with the following command:
-    ```bash
-    mysql> SELECT user,authentication_string,plugin,host FROM mysql.user;
-    ```
-  - Configuring Password Access for a Dedicated MySQL User:
-    ```bash
-    $ sudo mysql
-    $ mysql -u <user> -p
-    mysql> CREATE USER 'sammy'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'password';
-    mysql> ALTER USER 'sammy'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
-    mysql> GRANT ALL PRIVILEGES ON *.* TO 'sammy'@'localhost' WITH GRANT OPTION;
-    mysql> exit
-    ```
+    - check which authentication method each of your MySQL user accounts use with the following command:
+      ```bash
+      mysql> SELECT user,authentication_string,plugin,host FROM mysql.user;
+      ```
+    - Configuring Password Access for a Dedicated MySQL User:
+      ```bash
+      $ sudo mysql
+      $ mysql -u <user> -p
+      mysql> CREATE USER 'sammy'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'password';
+      mysql> ALTER USER 'sammy'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+      mysql> GRANT ALL PRIVILEGES ON *.* TO 'sammy'@'localhost' WITH GRANT OPTION;
+      mysql> exit
+      ```
 
 ### Step 3 - Installing PHP
 
@@ -71,22 +71,24 @@ default in all Ubuntu installations since 8.04 LTS.
   ```bash
   $ sudo apt install php libapache2-mod-php php-mysql
   $ php -v
+  $ php -S localhost:8000    [PHP Built-in WebServer]
   ```
-  `software-properties-common` it provides some useful scripts for adding and removing PPA. Using a `Personal Package
-  Archive (PPA)`, you can distribute software and updates directly to Ubuntu users. Create your source package, upload
-  it
-  and Launchpad will build binaries and then host them in your own apt repository.
-    ```bash
-    $ sudo apt install software-properties-common
-    $ sudo add-apt-repository ppa:ondrej/php
-    $ sudo apt update
-    $ sudo apt install -y php7.3
-    $ php -v
-    $ php -S localhost:8000    [PHP Built-in WebServer]
-    ```
+- Switch Between Multiple PHP Versions: <br>
+  Using a `Personal Package Archive (PPA)`, you can distribute software and updates directly to Ubuntu users. Create
+  your source package, upload it and Launchpad will build binaries and then host them in your own apt repository.
+  ```bash
+  $ sudo apt install software-properties-common    [If add-apt-repository command not work]
+  $ sudo add-apt-repository ppa:ondrej/php
+  $ sudo apt update
+  $ sudo apt install php7.3
+  ```
 - Installing PHP 7.3 Extensions
   ```bash
   $ sudo apt install php7.3-cli php7.3-fpm php7.3-json php7.3-pdo php7.3-mysql php7.3-zip php7.3-gd  php7.3-mbstring php7.3-curl php7.3-xml php7.3-bcmath php7.3-json
+  ```
+- you can run the following command to set which system wide version of PHP you want to use by default:
+  ```bash
+  $ sudo update-alternatives --config php
   ```
 - completely remove any package with a name that starts with `php`
   ```bash
@@ -105,18 +107,18 @@ default in all Ubuntu installations since 8.04 LTS.
     $ sudo phpenmod mbstring
     $ sudo systemctl restart apache2
     ```
-  - To resolve this, select the abort option to stop the installation process.
-    ```bash
-    $ sudo mysql
-    $ UNINSTALL COMPONENT "file://component_validate_password";
-    $ INSTALL COMPONENT "file://component_validate_password";
-    $ exit
-    ```
-  - Completely removing phpMyAdmin:
+    - To resolve this, select the abort option to stop the installation process.
       ```bash
-      $ sudo apt-get -f install
-      $ sudo dpkg -P phpmyadmin  
-      $ sudo rm -vf /etc/apache2/conf.d/phpmyadmin.conf
-      $ sudo rm -vfR /usr/share/phpmyadmin
-      $ sudo service apache2 restart
+      $ sudo mysql
+      $ UNINSTALL COMPONENT "file://component_validate_password";
+      $ INSTALL COMPONENT "file://component_validate_password";
+      $ exit
       ```
+    - Completely removing phpMyAdmin:
+        ```bash
+        $ sudo apt-get -f install
+        $ sudo dpkg -P phpmyadmin  
+        $ sudo rm -vf /etc/apache2/conf.d/phpmyadmin.conf
+        $ sudo rm -vfR /usr/share/phpmyadmin
+        $ sudo service apache2 restart
+        ```
