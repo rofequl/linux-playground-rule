@@ -36,6 +36,8 @@
     $ sudo apt remove [packagename]
     ```
 - Display the user details that are currently logged into the system: ``w``
+- Move directory in Linux: ``mv source dest``
+- Regular user to be able to modify files in these directories: ``sudo chown -R $USER:$USER /var/www/nayem/``
   
 ## Set Up Browser
 ### Brave
@@ -56,3 +58,15 @@ $ cd ~/.ssh
 $ ssh-keygen -o -t rsa -C "email@example.com"
 $ cat id_rsa.pub
 ```
+
+## Getting Started with Vim Editor in Linux
+
+- To install vim ubuntu run the command:
+  ```bash
+  $ sudo apt-get install vim
+  ```
+- To open a file in vim editor just write the file name after the vim command:``vim filename.txt``
+- Write into file: ``i``
+- Save and Exit: ``:wq!``
+- Exit without saving the file: ``q!``
+- You can see this tutorial by command vimtutor into the terminal: ``vimtutor``

@@ -114,11 +114,22 @@ default in all Ubuntu installations since 8.04 LTS.
       $ INSTALL COMPONENT "file://component_validate_password";
       $ exit
       ```
-    - Completely removing phpMyAdmin:
-        ```bash
-        $ sudo apt-get -f install
-        $ sudo dpkg -P phpmyadmin  
-        $ sudo rm -vf /etc/apache2/conf.d/phpmyadmin.conf
-        $ sudo rm -vfR /usr/share/phpmyadmin
-        $ sudo service apache2 restart
-        ```
+
+### Step 5 - Completely Uninstall LAMP Ubuntu
+- This will remove Apache
+  ```bash
+  $ sudo service apache2 stop
+  $ sudo apt-get purge apache2 apache2-utils apache2.2-bin
+  $ sudo apt remove apache2.*
+  $ sudo apt-get autoremove
+  $ whereis apache2
+  $ sudo rm -rf /etc/apache2
+  ```
+- Completely removing phpMyAdmin:
+  ```bash
+  $ sudo apt-get -f install
+  $ sudo dpkg -P phpmyadmin  
+  $ sudo rm -vf /etc/apache2/conf.d/phpmyadmin.conf
+  $ sudo rm -vfR /usr/share/phpmyadmin
+  $ sudo service apache2 restart
+  ```
