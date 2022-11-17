@@ -114,8 +114,85 @@ default in all Ubuntu installations since 8.04 LTS.
       $ INSTALL COMPONENT "file://component_validate_password";
       $ exit
       ```
+- Nginx web server to find and serve the phpMyAdmin files correctly, you’ll need to create a symbolic link from the
+  installation files to Nginx’s document root directory:
+  ```bash
+  $ sudo ln -s /usr/share/phpmyadmin /var/www/nayem/phpmyadmin
+  ```
 
-### Step 5 - Completely Uninstall LAMP Ubuntu
+### Step 5 - Installing Nginx
+
+  ```bash
+  $ sudo apt update
+  $ sudo apt install nginx
+  $ sudo ufw app list
+  $ sudo ufw allow 'Nginx HTTP'
+  $ sudo ufw status
+  $ systemctl status nginx
+  $ sudo systemctl restart nginx
+  $ sudo systemctl enable nginx
+  ```
+
+- You’ll need to install php-fpm, which stands for “PHP fastCGI process manager”, and tell Nginx to pass PHP requests to
+  this software for processing.
+  ```bash
+  $ sudo apt install php-fpm
+  ```
+
+### Step 6 - Setting Up Vertual host
+
+- Create the directory for your_domain as follows:
+  ```bash
+  $ sudo mkdir -p /var/www/nayem
+  ```
+- Next, assign ownership of the directory with the $USER environment variable:
+  ```bash
+  $ sudo chown -R $USER:$USER /var/www/nayem
+  $ sudo chmod -R 755 /var/www/nayem
+  ```
+- create a sample index.html page:
+  ```bash
+  $ nano /var/www/nayem/index.html
+  ```
+- create a server block with the correct directives:
+  ```bash
+  $ sudo nano /etc/nginx/sites-available/nayem
+  ```
+  ```bash
+  server {
+    listen 80;
+    server_name your_domain www.your_domain;
+    root /var/www/your_domain;
+
+    index index.html index.htm index.php;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+     }
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+  }
+  ```
+- Activate your configuration by linking to the config file from Nginx’s sites-enabled directory:
+  ```bash
+  $ sudo ln -s /etc/nginx/sites-available/nayem /etc/nginx/sites-enabled/
+  ```
+- You can test your configuration for syntax errors by typing:
+  ```bash
+  $ sudo nginx -t
+  $ sudo systemctl reload nginx
+  ```
+
+### Step 6 - Completely Uninstall LAMP Ubuntu
+
 - This will remove Apache
   ```bash
   $ sudo service apache2 stop
