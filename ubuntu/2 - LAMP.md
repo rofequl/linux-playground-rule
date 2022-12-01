@@ -67,7 +67,7 @@ default in all Ubuntu installations since 8.04 LTS.
 
 ### Step 3 - Installing PHP
 
-- Installing and testing PHP 7.3<br>
+- Installing and testing PHP<br>
   ```bash
   $ sudo apt install php libapache2-mod-php php-mysql
   $ php -v
@@ -94,7 +94,32 @@ default in all Ubuntu installations since 8.04 LTS.
   ```bash
   $ sudo apt-get purge 'php*'
   ```
-
+  #### Installing PHP 5.3.29
+    - Download the latest tar from here [php5.3](https://www.php.net/releases/index.php)
+    - Extract to /var/lib/php/modules
+      ```bash
+      $ sudo cp ~/Downloads/php-5.3.29.tar.gz
+      $ cd /var/lib/php/modules
+      $ tar -xzvf php-5.3.29.tar.gz
+      ```
+    - Install php
+      ```bash
+      $ cd php-5.3.29
+      $ ./configure
+      $ sudo make
+      $ sudo make install
+      ```
+    - Error may occur with missing libxml2 after ``./configure`` command, just install missing lib (``sudo apt install
+      libxml2-dev``) then rerun ``./configure`` after that you can continue with installation! <br>Check ``php -v``
+    - you can't switch from this old php version to the new one if you have such :( So you will need to uninstall php5.3
+      to be able to use php5.5 or newer.
+      ```bash
+      $ sudo apt-get install checkinstall
+      $ cd /var/lib/php/modules/php-5.3.29
+      $ sudo checkinstall
+      $ sudo dpkg -i php_5.3.29-1amd64.deb
+      $ sudo apt purge php
+      ```
 ### Step 4 - Install phpMyAdmin
 
 - Once you have your LAMP setup you can start by installing phpMyAdmin.
@@ -117,9 +142,30 @@ default in all Ubuntu installations since 8.04 LTS.
 - Nginx web server to find and serve the phpMyAdmin files correctly, you’ll need to create a symbolic link from the
   installation files to Nginx’s document root directory:
   ```bash
-  $ sudo ln -s /usr/share/phpmyadmin /var/www/nayem/phpmyadmin
+  $ sudo ln -s /usr/share/phpmyadmin /var/www/html/phpmyadmin
   ```
-
+- Create a server block load phpmyadmin:
+  ```bash
+  $ sudo nano /etc/nginx/sites-available/default
+  
+  server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html index.php;
+        server_name _;
+        location / {
+                try_files $uri $uri/ =404;
+        }
+        location ~ \.php$ {
+                include snippets/fastcgi-php.conf;
+                fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        }
+        location ~ /\.ht {
+                deny all;
+        }
+  }
+  ```
 ### Step 5 - Installing Nginx
 
   ```bash
@@ -190,6 +236,12 @@ default in all Ubuntu installations since 8.04 LTS.
   $ sudo nginx -t
   $ sudo systemctl reload nginx
   ```
+- set your domain host file:
+  ```bash
+  $ sudo nano /etc/hosts
+  
+  127.0.0.1       nayem.test
+  ```
 
 ### Step 6 - Completely Uninstall LAMP Ubuntu
 
@@ -201,6 +253,10 @@ default in all Ubuntu installations since 8.04 LTS.
   $ sudo apt-get autoremove
   $ whereis apache2
   $ sudo rm -rf /etc/apache2
+  ```
+- This will remove Nginx
+  ```bash
+  $ sudo apt-get remove --purge nginx nginx-full nginx-common
   ```
 - Completely removing phpMyAdmin:
   ```bash

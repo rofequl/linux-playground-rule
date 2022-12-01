@@ -8,6 +8,10 @@
   $ php artisan migrate
   $ php artisan serve
   ```
+- `storage` could not be opened in append mode: failed to open stream: Permission denied:
+  ```bash
+  $ sudo chown -R www-data:www-data /var/www/nayem/project/storage/
+  ```
 - Setup a virtual host for a Laravel project
   - First, copy the default configuration file and rename it:
     ```bash
@@ -36,3 +40,4 @@
     ```bash
     $ sudo service apache2 restart
     ```
+  

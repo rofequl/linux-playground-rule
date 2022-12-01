@@ -36,8 +36,28 @@
     ```
 
 ### Step 4 - unzip a zip file from the Terminal:
+
    ```bash
     $ sudo apt-get install unzip
     $ unzip <zip file name> -d <destination folder>
     $ unzip <zip file name>
-    ```
+   ```
+
+### Step 5 - Installing MySQL Workbench
+
+- Start by navigating to [MySQL APT Repository](https://dev.mysql.com/downloads/repo/apt/) download page and click
+  Download to save the deb package on your Ubuntu system.
+- add the official MySQL repository to the apt source list by running the command:
+  ```bash
+    $ cd Downloads
+    $ ls
+    $ sudo apt install ./mysql-apt-config_0.8.22-1_all.deb
+   ```
+- A pop-up window appears asking which MySQL product to install. As the required product is preselected, scroll down to
+  Ok and hit Enter to continue installing.
+- Install MySQL Workbench by running:
+  ```bash
+    $ sudo apt update
+    $ sudo apt install mysql-workbench-community
+    $ mysql-workbench
+   ```
